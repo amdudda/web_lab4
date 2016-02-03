@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>circles drawn on a canvas</title>
+    <style>
+        canvas{
+            height: 300px;
+            width: 500px;
+            border: 1px solid black;
+        }
+    </style>
+
+</head>
+<body>
+<canvas id="sketchPad"></canvas>
+<h1>Drawing circles on a canvas!</h1>
+<p id="coords">Position data will appear here as mouse moves.</p>
+<!-- sets up event listener and code for handler. -->
+<script>
+    document.getElementById("sketchPad").addEventListener("mousemove",drawCircle);
+    var drawLeft = document.getElementById("sketchPad").getBoundingClientRect().left;
+    var drawTop = document.getElementById("sketchPad").getBoundingClientRect().top;
+
+    function drawCircle(event) {
+        // doesn't do anything yet.
+        // get our current coordinates
+        curX = event.clientX - drawLeft;
+        curY = event.clientY - drawTop;
+        document.getElementById("coords").innerHTML = "rectangle starts at: " + drawLeft + ", " + drawTop +
+                "; circle at: " + curX + ", " + curY + "; mouse at " + event.pageX + ", " + event.pageY;
+        // draw our circle
+        var c = document.getElementById("sketchPad");
+        var ctx = c.getContext("2d");
+        ctx.beginPath();
+        ctx.arc(curX, curY, 5, 0, 2 * Math.PI);
+//            ctx.strokeStyle = "#FF0000";
+        ctx.stroke();
+    }
+</script>
+</body>
+</html>
