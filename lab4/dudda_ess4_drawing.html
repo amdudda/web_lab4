@@ -7,9 +7,11 @@
 <body>
 <h1>Drawing circles on a canvas!</h1>
 <canvas id="sketchPad" height="300px" width="500px" style="border:1px solid black;"></canvas>
+<p><button id="clearSketchPad">Clear Canvas</button></p>
 <!-- sets up event listener and code for handler. -->
 <script>
     document.getElementById("sketchPad").addEventListener("mousemove",drawCircle);
+    document.getElementById("clearSketchPad").addEventListener("click",clearDrawing);
     var drawLeft = document.getElementById("sketchPad").getBoundingClientRect().left;
     var drawTop = document.getElementById("sketchPad").getBoundingClientRect().top;
 
@@ -25,6 +27,10 @@
         ctx.arc(curX, curY, 5, 0, 2 * Math.PI);
 //        ctx.strokeStyle = "#FF0000";
         ctx.stroke();
+    }
+
+    function clearDrawing(){
+        document.getElementById("sketchPad").getContext("2d").clearRect(0,0,500,300);
     }
 </script>
 </body>
