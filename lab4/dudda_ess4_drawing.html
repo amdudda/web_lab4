@@ -7,13 +7,34 @@
 <body>
 <h1>Drawing circles on a canvas!</h1>
 <canvas id="sketchPad" height="300px" width="500px" style="border:1px solid black;"></canvas>
-<p><button id="clearSketchPad">Clear Canvas</button></p>
+<p><button id="clearSketchPad">Clear the Canvas</button></p>
+<div id="colorblocks" style="width:300px;"><p>Choose a color to draw with:</p></div>
 <!-- sets up event listener and code for handler. -->
 <script>
+    // set up event listeners
     document.getElementById("sketchPad").addEventListener("mousemove",drawCircle);
     document.getElementById("clearSketchPad").addEventListener("click",clearDrawing);
+
+    // global variables
     var drawLeft = document.getElementById("sketchPad").getBoundingClientRect().left;
     var drawTop = document.getElementById("sketchPad").getBoundingClientRect().top;
+    var colorToUse = "#FFFFFF";  // white so it looks like it's not drawing anything until the user picks a color.
+
+    // set up my colorsquare elements
+    var colors= ["red","orange","yellow","green","blue","violet","white","grey","black"];  // web-safe colors for now
+    for (var i = 0; i < colors.length; i++) {
+        square = document.createElement("div");
+        square.style.display = "inline-block";  // inline so that they will flow with the available space
+        square.style.height = "50px";
+        square.style.width = "50px";
+        square.style.border = "1px dashed black";
+        square.style.background = colors[i];
+        square.className = "colorsquare";
+        square.id = colors[i];
+        square.addEventListener("click",changeColor);
+        // and add our square to the colorblocks div element
+        document.getElementById("colorblocks").appendChild(square);
+    }
 
     function drawCircle(event) {
         // doesn't do anything yet.
@@ -25,12 +46,17 @@
         var ctx = c.getContext("2d");
         ctx.beginPath();
         ctx.arc(curX, curY, 5, 0, 2 * Math.PI);
-        ctx.strokeStyle = "#FF0000";
+        ctx.strokeStyle = colorToUse;
         ctx.stroke();
     }
 
     function clearDrawing(){
         document.getElementById("sketchPad").getContext("2d").clearRect(0,0,500,300);
+    }
+
+    function changeColor(event){
+        // http://stackoverflow.com/questions/48239/getting-the-id-of-the-element-that-fired-an-event
+        colorToUse = event.target.id;
     }
 </script>
 </body>
