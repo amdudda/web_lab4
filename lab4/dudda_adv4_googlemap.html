@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<!-- Author: A.M. Dudda -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Google Map: Geography Quiz Game</title>
+    <!-- CSS styling info for map -->
+    <style>
+        #map {
+            height: 400px;
+            width: 500px;
+            background: papayawhip;
+        }
+    </style>
+    <!-- Hard-coded city data plus code to build the game-->
+    <script src="cities.js"></script>
+    <script src="game_code.js"></script>
+</head>
+<body>
+    <h1 id="question"></h1>
+    <h2 id="prompt"></h2>
+    <div id="map"></div>
+    <!-- Google maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
+    <p id="score"></p>
+</body>
+</html>
