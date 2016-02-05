@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!-- Author: A.M. Dudda -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Google Map: Getting Started</title>
+    <!-- CSS styling info for map -->
+    <style>
+        #map {
+            height: 400px;
+            width: 500px;
+            background: papayawhip;
+        }
+    </style>
+    <script>
+        // json objects storing latlong data for 3 cities
+        var City = function(n,l1,l2){
+            this.name = n;
+            this.coords = {lat: l1, lng: l2};
+        }
+        var msp = new City("Minneapolis", 44.972583, -93.283667);
+        var fargo = new City("Fargo", 46.875694, -96.790556);
+        var duluth = new City("Duluth", 46.788415, -92.100247)
+
+        // and make the markers global variables
+        var markMSP, markFargo, markDuluth;
+    </script>
+</head>
+<body>
+    <h1>Can you find Minneapolis?</h1>
+    <h2>Click on the marker that you think identifies Minneapolis!</h2>
+    <div id="map"></div>
+    <!-- script to call the map -->
+    <script>
+        // now we build our map, with markers
+        function initMap() {
+            var mapDiv = document.getElementById('map');
+            var map = new google.maps.Map(mapDiv, {
+                // center and zoom are required options
+                center: {lat: 44.972583, lng: -93.283667},
+                zoom: 5
+            });
+            markMSP = new google.maps.Marker({
+                position: msp.coords,
+                map: map,
+                name: msp.name,
+            })
+            markFargo = new google.maps.Marker({
+                position: fargo.coords,
+                map: map,
+                name: fargo.name
+            })
+            markDuluth = new google.maps.Marker({
+                position: duluth.coords,
+                map: map,
+                name: duluth.name
+            })
+            // got event listener syntax from http://stackoverflow.com/questions/2489483/google-maps-marker-click-event
+            google.maps.event.addListener(markDuluth,"click",function() { alert("Wrong!\nThis is Duluth!"); })
+            google.maps.event.addListener(markFargo,"click",function() { alert("Wrong!\nThis is Fargo!"); })
+            google.maps.event.addListener(markMSP,"click",function() { alert("Correct!\nYou fount Minneapolis!"); })
+        }
+
+    </script>
+    <!-- Google maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
+</body>
+</html>

@@ -31,7 +31,7 @@
         square.style.background = colors[i];
         square.className = "colorsquare";
         square.id = colors[i];
-        square.addEventListener("click",changeColor);
+        square.addEventListener("click",changeColor);  // I could also do this separately, but took care of it here while I was thinking of it.
         // and add our square to the colorblocks div element
         document.getElementById("colorblocks").appendChild(square);
     }
