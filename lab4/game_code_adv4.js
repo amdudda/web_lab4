@@ -70,8 +70,9 @@ function setupCities(round) {
     document.getElementById("score").innerText = "Current score: " + score;
 }
 
-// a function to check the name and respond appropriately
+// a function to check the name and respond appropriately, then move to the next round
 function checkName() {
+    // check the selected marker
     cityName = this.name;
     var alertmsg;
 

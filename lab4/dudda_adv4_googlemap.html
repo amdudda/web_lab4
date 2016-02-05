@@ -14,13 +14,13 @@
     </style>
     <!-- Hard-coded city data plus code to build the game-->
     <script src="cities.js"></script>
-    <script src="game_code.js"></script>
+    <script src="game_code_adv4.js"></script>
 </head>
 <body>
     <h1 id="question">Find the capital city!</h1>
     <h2 id="prompt">
-        How many choices would you like to be given each round? <input id="numMarkers" type="number" value="3" required="true"/> <br />
-        How many rounds would you like to play? <input id="numRounds" type="number" value="3" required="true"/> <br />
+        How many choices would you like to be given each round? <input id="numMarkers" type="number" max=10 min=2 value="3" required="true"/> <br />
+        How many rounds would you like to play? <input id="numRounds" type="number" value="3" max=10 min=1 required="true"/> <br />
         <button id="submit" onclick=startGame()>Click to begin!</button>
     </h2>
     <div id="map"></div>
