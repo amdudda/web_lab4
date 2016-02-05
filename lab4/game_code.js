@@ -3,25 +3,27 @@
  */
     // testing: lest's just create three sets of cities
 
-//  TODO:  how would we set up a variable number of cities for a variable number of rounds?
+//  set up a variable number of cities for a variable number of rounds?
 var totalRounds = 5;
 var numCities = 4;
-var gameRounds = []; // [q1,q2,q3];
-var defaultCenter = {lat: 39.04, lng: -95.69};
+var gameRounds = [];
+var defaultCenter = {lat: 39.04, lng: -95.69};  // Topeka, KS is reasonably close to the middle of the geographic US.
 
-for (i=0; i < totalRounds; i++) {
-    var cityList = [];
-    for (var j=0; j<numCities; j++) {
-        // pick a random city - known bug:  this will occasionally pick the same city twice, or rarely, all three times!
-        // http://www.w3schools.com/jsref/jsref_random.asp
-        var rNum =  Math.floor(Math.random() * 50);
-        cityList[j] = arrCities[rNum];
+function setupGame() {
+    for (i = 0; i < totalRounds; i++) {
+        var cityList = [];
+        for (var j = 0; j < numCities; j++) {
+            // pick a random city - known bug:  this will occasionally pick the same city twice, or rarely, all n times!
+            // http://www.w3schools.com/jsref/jsref_random.asp
+            var rNum = Math.floor(Math.random() * 50);
+            cityList[j] = arrCities[rNum];
+        }
+        gameRounds[i] = {
+            cities: cityList,
+            mapCenter: defaultCenter,
+            answer: cityList[0].capital  // for now, the first city of the three - works b/c cities are picked at random.
+        };
     }
-    gameRounds[i] = {
-        cities: cityList,
-        mapCenter: defaultCenter,
-        answer: cityList[0].capital  // for now, the first city of the three - works b/c cities are picked at random.
-    };
 }
 
 // some variables for game management
@@ -31,7 +33,6 @@ var roundAnswer;
 var mapProperties;
 var score = 0;
 var roundNum = 0;
-
 
 // create a method that will construct the appropriate map for each quiz question:
 function setupCities(round) {
@@ -98,8 +99,9 @@ function checkName() {
 
 // THIS INITIALIZES THE GAME
 // initialize the game
-// here we build our map, with markers
-function initMap() {
+function startGame() {
+    totalRounds = document.getElementById("numRounds").value;
+    numCities = document.getElementById("numMarkers").value;
+    setupGame();
     setupCities(gameRounds[0]);
 }
-
