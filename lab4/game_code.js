@@ -2,23 +2,27 @@
  * Created by amdudda on 2/5/16.
  */
     // testing: lest's just create three sets of cities
-q1 = {
-    cities: [arrCities[0],arrCities[1],arrCities[2]],
-    mapCenter:  {lat: 39.04, lng: -95.69},
-    answer: arrCities[0].capital
-};
-q2 = {
-    cities: [arrCities[3],arrCities[4],arrCities[5]],
-    mapCenter: {lat: 39.04, lng: -95.69},
-    answer: arrCities[3].capital
-};
-q3 = {
-    cities: [arrCities[6],arrCities[7],arrCities[8]],
-    mapCenter: {lat: 39.04, lng: -95.69},
-    answer: arrCities[6].capital
-};
-//  TODO:  how would we set up a variable number of cities for a variable number of rounds?
 
+//  TODO:  how would we set up a variable number of cities for a variable number of rounds?
+var totalRounds = 5;
+var numCities = 4;
+var gameRounds = []; // [q1,q2,q3];
+var defaultCenter = {lat: 39.04, lng: -95.69};
+
+for (i=0; i < totalRounds; i++) {
+    var cityList = [];
+    for (var j=0; j<numCities; j++) {
+        // pick a random city - known bug:  this will occasionally pick the same city twice, or rarely, all three times!
+        // http://www.w3schools.com/jsref/jsref_random.asp
+        var rNum =  Math.floor(Math.random() * 50);
+        cityList[j] = arrCities[rNum];
+    }
+    gameRounds[i] = {
+        cities: cityList,
+        mapCenter: defaultCenter,
+        answer: cityList[0].capital  // for now, the first city of the three - works b/c cities are picked at random.
+    };
+}
 
 // some variables for game management
 var karte;
@@ -27,8 +31,6 @@ var roundAnswer;
 var mapProperties;
 var score = 0;
 var roundNum = 0;
-var totalRounds = 3;
-var gameRounds = [q1,q2,q3];
 
 
 // create a method that will construct the appropriate map for each quiz question:
@@ -87,7 +89,9 @@ function checkName() {
     if (roundNum < totalRounds) {
     setupCities(gameRounds[roundNum]);
     } else {
-        document.getElementById("score").innerText = "Game over!  You scored " + score + " of a possible " + totalRounds + " points."
+        document.getElementById("question").innerText = "Game Over!";
+        document.getElementById("prompt").innerText = "You scored " + score + " of a possible " + totalRounds + " points."
+        //document.getElementById("score").innerText = "Game over!  You scored " + score + " of a possible " + totalRounds + " points."
     }
 }
 
