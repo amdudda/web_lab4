@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!-- Author: A.M. Dudda -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Google Map: Getting Started</title>
+    <!-- CSS styling info for map -->
+    <style>
+        #map {
+            height: 400px;
+            width: 500px;
+            background: papayawhip;
+        }
+    </style>
+    <!-- Hard-coded city data -->
+    <script src="city_data.js">  </script>
+</head>
+<body>
+    <h1>Can you find Minneapolis?</h1>
+    <h2>Click on the marker that you think identifies Minneapolis!</h2>
+    <div id="map"></div>
+    <!-- script to call the map -->
+    <script>
+        var map
+        // now we build our map, with markers
+        function initMap() {
+            setupCities(q3);
+        }
+
+    </script>
+    <!-- Google maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>
+</body>
+</html>
+<!--
+TODO:
+make the game so it moves to the next set of cities after getting an answer.
+-->

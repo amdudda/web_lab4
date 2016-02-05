@@ -38,7 +38,10 @@
             var map = new google.maps.Map(mapDiv, {
                 // center and zoom are required options
                 center: {lat: 44.972583, lng: -93.283667},
-                zoom: 5
+                zoom: 5,
+                // the next two lines are for Adv.Part2
+                mapTypeId: google.maps.MapTypeId.SATELLITE,
+                disableDefaultUI: true
             });
             markMSP = new google.maps.Marker({
                 position: msp.coords,
@@ -58,7 +61,7 @@
             // got event listener syntax from http://stackoverflow.com/questions/2489483/google-maps-marker-click-event
             google.maps.event.addListener(markDuluth,"click",function() { alert("Wrong!\nThis is Duluth!"); })
             google.maps.event.addListener(markFargo,"click",function() { alert("Wrong!\nThis is Fargo!"); })
-            google.maps.event.addListener(markMSP,"click",function() { alert("Correct!\nYou fount Minneapolis!"); })
+            google.maps.event.addListener(markMSP,"click",function() { alert("Correct!\nYou found Minneapolis!"); })
         }
 
     </script>
