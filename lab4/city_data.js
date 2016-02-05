@@ -2,6 +2,7 @@
  * Created by amdudda on 2/5/16.
  */
 
+// DATA FOR BASIC THREE MAPS GAME
 // json object storing latlong data for cities
 var City = function (n, l1, l2) {
     this.name = n;
@@ -45,20 +46,18 @@ var q3 = {
     answer: "Lagos"
 }
 
-
-// and group the three sets of cities.  I may need to make this an iterable array...
-var gameRounds = {
-    "Minneapolis": NAcities,
-    "Frankfurt": EUcities,
-    "Lagos": AFcities
-}
-
-// starting position for our map
+// CODE FOR THE ACTUAL GAME STARTS HERE
+// some variables for game management
+var karte;
 var kartesZentrum;
 var roundAnswer;
 var mapProperties;
+var score = 0;
+var roundNum = 0;
+var gameRounds = [q1,q2,q3];
+
+
 // create a method that will construct the appropriate map for each quiz question:
-// start with just constructing q1
 function setupCities(round) {
 // this sets up the map properties for the question
     roundAnswer = round.answer;
@@ -72,8 +71,8 @@ function setupCities(round) {
         disableDefaultUI: true
     };
     var mapDiv = document.getElementById('map');
-    map = new google.maps.Map(mapDiv, mapProperties);
-// and now to add markers to the map
+    karte = new google.maps.Map(mapDiv, mapProperties);
+    // and now to add markers to the map
     // we need a list to store the various map markers because otherwise the code gives them all the same attributes.
     var mapMarkers = [];
     for (var i = 0; i < round.cities.length; i++) {
@@ -81,13 +80,18 @@ function setupCities(round) {
         var cCoords = round.cities[i].coords;
         mapMarkers[i] = new google.maps.Marker({
             position: cCoords,
-            map: map,
+            map: karte,
             name: cCity
         });
 
         // and add an event listener for that city
         google.maps.event.addListener(mapMarkers[i], "click", checkName)
     }
+
+    // oh... don't forget to update the game header
+    document.getElementById("question").innerText = "Round " + roundNum + ": Can you find " + roundAnswer + "?";
+    document.getElementById("prompt").innerText = "Click on the marker that you think identifies " + roundAnswer + "!";
+    document.getElementById("score").innerText = "Current score: " + score;
 }
 
 // a function to check the name and respond appropriately
@@ -98,9 +102,22 @@ function checkName() {
     // determine the appropriate response
     if (cityName == roundAnswer) {
         alertmsg = "Yay!\nYou found " + cityName + "!";
+        ++score;
     } else {
         alertmsg = "Wrong!\nThis is " + cityName + "!";
     }
 
     alert(alertmsg);
+
+    // TODO: need to move to next city.
+    ++roundNum;
+    setupCities(gameRounds[roundNum]);
+}
+
+
+// THIS INITIALIZES THE GAME
+// initialize the game
+// here we build our map, with markers
+function initMap() {
+    setupCities(gameRounds[0]);
 }
