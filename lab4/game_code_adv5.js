@@ -144,13 +144,13 @@ function fetchCity(latlng) {
         http://stackoverflow.com/questions/14220321/how-do-i-return-the-response-from-an-asynchronous-call
     */
     geocoder.geocode({'location': latlng}, function (results, status) {
-        if (status === google.maps.GeocoderStatus.OK && results[0]) {         // when we go to update the game, we need a "while not OK" loop.
-            //alert(results[0].formatted_address);
+        if (status === google.maps.GeocoderStatus.OK && results[0]) {         // TODO: whe I go to update the game, I need a "while undefined" loop in the calling function
+            //alert(results[0].formatted_address);  // alerting works so why doesn't setting value of stadt work?
             stadt = results[0].formatted_address;
         } else {
             //alert("oops");
             stadt = 'what city? *blink* *blink*';
         }
     });
-    return stadt;
+    return stadt;  // from what I understand, this doesn't work because the program moves on to the next line of code in the caller and doesn't wait around for the answer.
 }
