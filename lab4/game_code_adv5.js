@@ -36,7 +36,7 @@ function setupGame() {
             var nCoord = ((Math.random()) * nsRange) + south;
             var wCoord = -((Math.random()) * ewRange) + west;
             //myCoords = {lat: nCoord, lng: wCoord};
-            var myCity;
+            var myCity = "warum bin ich noch hier?";
             myCity = fetchCity({lat: nCoord, lng: wCoord});
             cityList[j] = new City(myCity,nCoord,wCoord);
         }
@@ -134,17 +134,19 @@ function startGame() {
 
 
 // fetch reverse geocoder data to extract city name from results
-// TODO: Why is this function returning "undefined"?  testing with alerts shows this code works, it just doesn't return results. :(
 function fetchCity(latlng) {
     // TODO: only accept results that are actually in MN
     var geocoder = new google.maps.Geocoder;
+    var stadt = "warum bin ich noch hier?";
+    // TODO: stadt is not being reassigned in this code block for some reason???
     geocoder.geocode({'location': latlng}, function (results, status) {
         if (status === google.maps.GeocoderStatus.OK && results[0]) {         // when we go to update the game, we need a "while not OK" loop.
             //alert(results[0].formatted_address);
-            return results[0].formatted_address;
+            stadt = results[0].formatted_address;
         } else {
             //alert("oops");
-            return 'what city? *blink* *blink*';
+            stadt = 'what city? *blink* *blink*';
         }
     });
+    return stadt;
 }
