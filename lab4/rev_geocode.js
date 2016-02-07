@@ -17,8 +17,9 @@ function initMap() {
 // can we display the result of a geocode lookup of Minneapolis?  Yes, yes we can!
     var nyc = {lat:40.714224,lng:-73.961452}
     var mpls = {lat: 44.972583, lng: -93.283667};
-    var danversMN = {lat:45.281999, lng:-95.751928}
-    var cities = [nyc,mpls,danversMN];
+    var danversMN = {lat:45.281999, lng:-95.751928};
+    var mystery = {lat:45.9826580658881, lng: -86.12011305669556 };
+    var cities = [mystery]; //[nyc,mpls,danversMN];
     for (var c=0; c<cities.length; c++) {
         geocoder.geocode({'location': cities[c]}, function (results, status) {
             if (status === google.maps.GeocoderStatus.OK) {         // when we go to update the game, we need a "while not OK" loop.
