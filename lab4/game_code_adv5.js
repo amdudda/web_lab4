@@ -36,7 +36,10 @@ function setupGame() {
             var nCoord = ((Math.random()) * nsRange) + south;
             var wCoord = -((Math.random()) * ewRange) + west;
             //myCoords = {lat: nCoord, lng: wCoord};
-            var myCity = fetchCity({lat: nCoord, lng: wCoord});
+
+
+            var myCity = fetchCity({lat: nCoord, lng: wCoord}, geocodedCity);  //Add callback function as argument. 
+
             cityList[j] = new City(myCity,nCoord,wCoord);
         }
         gameRounds[i] = {
@@ -47,8 +50,23 @@ function setupGame() {
     }
 }
 
+var citiesGeocoded = 0;   //Counter - represents results returned
+
+function geocodedCity(stadt){           //The geocoder is calling this when it has a result, or error
+  alert("geocoder done " + stadt);
+  citiesGeocoded++;
+  //TODO save city in list of cities?
+
+  var citiesToDecode = 9;   //TODO cities per round * number of rounds?  
+
+  if (citiesGeocoded == citiesToDecode) {
+    //set up markers, start game
+    alert("about to call method to start game");
+    //TODO do setup, start game.
+  }
 
 
+}
 // some variables for game management
 var karte;
 var kartesZentrum;
@@ -133,7 +151,12 @@ function startGame() {
 
 
 // fetch reverse geocoder data to extract city name from results
-function fetchCity(latlng) {
+
+//Added comments on the order of stuff happening
+
+function fetchCity(latlng, callback) {   //callback is a function you'll provide. 
+
+  // 1. this code.
     // TODO: only accept results that are actually in MN
     var geocoder = new google.maps.Geocoder;
     var stadt = "warum bin ich noch hier?";
@@ -143,14 +166,26 @@ function fetchCity(latlng) {
         Overflow makes sense in a way that I understand how to tweak my code:
         http://stackoverflow.com/questions/14220321/how-do-i-return-the-response-from-an-asynchronous-call
     */
+
+    // 3. make async geocoder request
     geocoder.geocode({'location': latlng}, function (results, status) {
+
+         //4. At some point, the request is returned, and this runs.
+         //Meanwhile, fetchCity finished and returned the default stadt value, and whatever function it is returned to continues to run.
+
         if (status === google.maps.GeocoderStatus.OK && results[0]) {         // TODO: whe I go to update the game, I need a "while undefined" loop in the calling function
             //alert(results[0].formatted_address);  // alerting works so why doesn't setting value of stadt work?
             stadt = results[0].formatted_address;
         } else {
             //alert("oops");
             stadt = 'what city? *blink* *blink*';
+
         }
+        callback(stadt);     //Call the callback function, replaces a return statement. Send the city (or error) to callback function provided.
+                                //TODO different behavior for errors vs. success. I saw a few errors for making too many calls within a short time.
     });
+
+    // 3., then this code, and since the geocoder hasn't finished, the intital value is returned
     return stadt;  // from what I understand, this doesn't work because the program moves on to the next line of code in the caller and doesn't wait around for the answer.
+                            //Yep, that's what's happening. 
 }
