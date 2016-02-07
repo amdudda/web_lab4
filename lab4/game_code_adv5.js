@@ -138,6 +138,11 @@ function fetchCity(latlng) {
     var geocoder = new google.maps.Geocoder;
     var stadt = "warum bin ich noch hier?";
     // TODO: stadt is not being reassigned in this code block for some reason???
+    /*
+        The problem has something to do with how asynchronous calls work, but not even this simple explanation at Stack
+        Overflow makes sense in a way that I understand how to tweak my code:
+        http://stackoverflow.com/questions/14220321/how-do-i-return-the-response-from-an-asynchronous-call
+    */
     geocoder.geocode({'location': latlng}, function (results, status) {
         if (status === google.maps.GeocoderStatus.OK && results[0]) {         // when we go to update the game, we need a "while not OK" loop.
             //alert(results[0].formatted_address);
