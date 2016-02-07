@@ -36,8 +36,7 @@ function setupGame() {
             var nCoord = ((Math.random()) * nsRange) + south;
             var wCoord = -((Math.random()) * ewRange) + west;
             //myCoords = {lat: nCoord, lng: wCoord};
-            var myCity = "warum bin ich noch hier?";
-            myCity = fetchCity({lat: nCoord, lng: wCoord});
+            var myCity = fetchCity({lat: nCoord, lng: wCoord});
             cityList[j] = new City(myCity,nCoord,wCoord);
         }
         gameRounds[i] = {
