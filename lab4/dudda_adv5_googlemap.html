@@ -21,7 +21,9 @@
         How many choices would you like to be given each round? <input id="numMarkers" type="number" max=10 min=2 value="3" required="true"/> <br />
         How many rounds would you like to play? <input id="numRounds" type="number" value="3" max=10 min=1 required="true"/> <br />
         <button id="submit" onclick=startGame()>Click to begin!</button>
+        <p id="processing"></p>
     </h2>
+
     <div id="map"></div>
     <!-- Google maps API -->
     <script src="https://maps.googleapis.com/maps/api/js?callback=initMap" async defer></script>

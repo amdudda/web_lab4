@@ -21,7 +21,7 @@ function setupGame() {
         gameRounds[i] = {
             cities: cityList,
             mapCenter: defaultCenter,
-            answer: cityList[0].capital  // for now, the first city of the three - works b/c cities are picked at random.
+            answer: cityList[0].name  // for now, the first city of the three - works b/c cities are picked at random.
         };
     }
 }

@@ -5,7 +5,7 @@
 // json object storing latlong data for cities
 var City = function (s, c, l1, l2) {
     this.state = s;
-    this.capital = c;
+    this.name = c;
     this.name = c;  // for legacy compatibility with original code
     this.coords = {lat: l1, lng: l2};
 }

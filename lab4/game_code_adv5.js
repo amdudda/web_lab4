@@ -9,7 +9,7 @@ var west = -97.23;  // (technically in Red River, but works for my purposes)
 
 // json object storing latlong data for cities
 var City = function (c, l1, l2) {
-    this.capital = c;
+    //this.capital = c;
     this.name = c;  // for legacy compatibility with original code
     this.coords = {lat: l1, lng: l2};
 };
@@ -18,10 +18,10 @@ var City = function (c, l1, l2) {
 var totalRounds = 5;
 var numCities = 4;
 var gameRounds = [];
-var defaultCenter = {lat: (north + south) / 2, lng: (east + west) / 2 };
+var defaultCenter = {lat: (north + south) / 2, lng: (east + west) / 2};
 //var geocoder;
 
-function initMap(){
+function initMap() {
 // does nothing other than exist to shut up the debugger.
 }
 
@@ -36,6 +36,7 @@ function randomgLong() {
 }
 
 var staedte = [];  // cities returned by the geocoder - probably can move this into geocodedCity function?
+
 var citiesGeocoded = 0;   //Counter - represents results returned
 
 function setupGame() {
@@ -50,38 +51,65 @@ function setupGame() {
 }
 
 
-function geocodedCity(stadt){           //The geocoder is calling this when it has a result, or error
-  alert("geocoder done " + stadt.capital + ", {" + stadt.coords.lat + "," + stadt.coords.lng + "}");  // amd: returning 'undefined' for the first few cities.
-  citiesGeocoded++;
-  //CJ save city in list of cities?
-    staedte.push(stadt);
-
-  var citiesToDecode = numCities * totalRounds; //9;   //CJ: cities per round * number of rounds?
-
-  if (citiesGeocoded == citiesToDecode) {
-    //set up markers, start game
-    //alert("about to call method to start game");
-    // CJ do setup, start game.
-      var elementToChoose = 0;
-    for (var k=0; k<totalRounds; k++) {
-        var cityList = [];
-        for (var m = 0; m<numCities; m++){
-            // tease out m cities from the staedte array
-            cityList[m] = staedte[elementToChoose];
-            elementToChoose++;
-        }
-        gameRounds[k] = {
-            cities: cityList,
-            mapCenter: defaultCenter,
-            answer: cityList[0].capital  // for now, the first city of the three - works b/c cities are picked at random.
-        }
+function geocodedCity(stadt) {           //The geocoder is calling this when it has a result, or error
+    alert("geocoder done " + stadt.name);
+    document.getElementById("processing").innerText="processing..."
+    // we need to make sure we have a decent city name, or this game is kind of unexciting because "undefined" becomes an easy answer
+    // TODO: If city not actually in MN, we're cheating the players.
+    if (stadt.name != undefined) {
+        // increment the number of cities found
+        citiesGeocoded++;
+        // pull the city name out of the data:
+        var cleanedCity = parseCityName(stadt.name);
+        stadt.name = cleanedCity;
+        //CJ save city in list of cities?
+        staedte.push(stadt);
+    } else {
+        // have to pull new coordinates
+        var nCoord = randomLat(); //((Math.random()) * nsRange) + south;
+        var wCoord = randomgLong(); // -((Math.random()) * ewRange) + west;
+        var myCity = fetchCity({lat: nCoord, lng: wCoord}, geocodedCity);
     }
-      // once we have our set of cities for each round, we can actually set up the game board
-      setupCities(gameRounds[0]);
-  }
 
+    var citiesToDecode = numCities * totalRounds; //9;   //CJ: cities per round * number of rounds?
 
+    if (citiesGeocoded == citiesToDecode) {
+        //set up markers, start game
+        //alert("about to call method to start game");
+        // CJ do setup, start game.
+        var elementToChoose = 0;
+        for (var k = 0; k < totalRounds; k++) {
+            var cityList = [];
+            for (var m = 0; m < numCities; m++) {
+                // tease out m cities from the staedte array
+                cityList[m] = staedte[elementToChoose];
+                elementToChoose++;
+            }
+            gameRounds[k] = {
+                cities: cityList,
+                mapCenter: defaultCenter,
+                answer: cityList[0].name  // for now, the first city of the three - works b/c cities are picked at random.
+            }
+        }
+        // once we have our set of cities for each round, we can actually set up the game board
+        setupCities(gameRounds[0]);
+    }
 }
+
+// this pulls out the city name from reverse geocoder data:
+function parseCityName(city) {
+    // cutoff the state zip country info
+    var cityLen = city.length;
+    var extraDetails = ", MN 55723, USA".length;
+    var cutoff = cityLen - extraDetails;
+    var shortCity = city.substring(0,cutoff);
+
+    // then strip away the street address info
+    var start = shortCity.lastIndexOf(",") + 1;
+    shortCity = shortCity.substring(start);
+    return shortCity;
+}
+
 // some variables for game management
 var karte;
 var kartesZentrum;
@@ -146,7 +174,7 @@ function checkName() {
     // move to next round
     ++roundNum;
     if (roundNum < totalRounds) {
-    setupCities(gameRounds[roundNum]);
+        setupCities(gameRounds[roundNum]);
     } else {
         document.getElementById("question").innerText = "Game Over!";
         document.getElementById("prompt").innerText = "You scored " + score + " of a possible " + totalRounds + " points."
@@ -171,39 +199,44 @@ function startGame() {
 
 function fetchCity(latlng, callback) {   //callback is a function you'll provide. 
 
-  // 1. this code.
+    // 1. this code.
     // TODO: only accept results that are actually in MN
     var geocoder = new google.maps.Geocoder;
     var stadt;
     // FIXED, with help from CJ: stadt is not being reassigned in this code block for some reason???
     /*
-        The problem has something to do with how asynchronous calls work, but not even this simple explanation at Stack
-        Overflow makes sense in a way that I understand how to tweak my code:
-        http://stackoverflow.com/questions/14220321/how-do-i-return-the-response-from-an-asynchronous-call
-    */
+     The problem has something to do with how asynchronous calls work, but not even this simple explanation at Stack
+     Overflow makes sense in a way that I understand how to tweak my code:
+     http://stackoverflow.com/questions/14220321/how-do-i-return-the-response-from-an-asynchronous-call
+     */
 
     // 3. make async geocoder request
     geocoder.geocode({'location': latlng}, function (results, status) {
 
-         //4. At some point, the request is returned, and this runs.
-         //Meanwhile, fetchCity finished and returned the default stadt value, and whatever function it is returned to continues to run.
+        //4. At some point, the request is returned, and this runs.
+        //Meanwhile, fetchCity finished and returned the default stadt value, and whatever function it is returned to continues to run.
 
-            if (status === google.maps.GeocoderStatus.OK && results[1]) {         // TODO: whe I go to update the game, I need a "while undefined" loop in the calling function
-                //alert(results[0].formatted_address);  // alerting works so why doesn't setting value of stadt work?
-                stadt = results[0].formatted_address;
-            } else {
-                // do nothing
-                alert("coordinates fell through");
+        if (status === google.maps.GeocoderStatus.OK && results[0]) {         // TODO: whe I go to update the game, I need a "while undefined" loop in the calling function
+            //alert(results[0].formatted_address);  // alerting works so why doesn't setting value of stadt work?
+            stadt = results[0].formatted_address;
+        } else {
+            // do nothing
+            // alert("coordinates fell through");
 
-            }
+        }
 
-
-        callback(new City(stadt,latlng.lat,latlng.lng));     //Call the callback function, replaces a return statement. Send the city (or error) to callback function provided.
-                                //TODO different behavior for errors vs. success. I saw a few errors for making too many calls within a short time.
+        /*  DEBUGGING:
+         var np = document.createElement("p");
+         np.innerText = stadt + ": " + latlng.lat + ", " + latlng.lng;
+         document.body.appendChild(np);
+         */
+        callback(new City(stadt, latlng.lat, latlng.lng));     //Call the callback function, replaces a return statement. Send the city (or error) to callback function provided.
+        //CJ:: different behavior for errors vs. success. I saw a few errors for making too many calls within a short time.
+        // amd: handled in the function the callback sends its data to.
     });
 
 
     // 3., then this code, and since the geocoder hasn't finished, the intital value is returned
     //return stadt;  // from what I understand, this doesn't work because the program moves on to the next line of code in the caller and doesn't wait around for the answer.
-                            //Yep, that's what's happening. 
+    //Yep, that's what's happening.
 }
