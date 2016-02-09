@@ -54,15 +54,13 @@ function setupGame() {
 
 function geocodedCity(stadt) {           //The geocoder is calling this when it has a result, or error
     //alert("geocoder done " + stadt.name);
-    if (announceSetup) {
-        alert("Setting up game!");
-        announceSetup = false;
-    }
+    // TODO: getting lots of "Uncaught RangeError: Maximum call stack size exceeded" errors.  I suspect the code is asking for too much
+    // data too quickly and annoying Google, because when I enable the alert below, the problems go away.
+    alert("Attempting to fetch a city!");
+
     // we need to make sure we have a decent city name, or this game is kind of unexciting because "undefined" becomes an easy answer
     // If city not actually in MN, we're cheating the players.
-    // TODO: getting lots of "Uncaught RangeError: Maximum call stack size exceeded" errors.  I suspect the code is asking for too much
-    // data too quickly and annoying Google, because when I run in debug mode, the problems go away.
-    if (stadt.name != undefined) { // && parseStateName(stadt.name) == "MN") {
+    if (stadt.name != undefined && parseStateName(stadt.name) == "MN") {
         // increment the number of cities found
         citiesGeocoded++;
         // pull the city name out of the data:
@@ -74,7 +72,7 @@ function geocodedCity(stadt) {           //The geocoder is calling this when it 
         // have to pull new coordinates
         var nCoord = randomLat(); //((Math.random()) * nsRange) + south;
         var wCoord = randomgLong(); // -((Math.random()) * ewRange) + west;
-        var myCity = fetchCity({lat: nCoord, lng: wCoord}, geocodedCity);  // recursive, which probabaly explains the error
+        var myCity = setTimeout(fetchCity({lat: nCoord, lng: wCoord}, geocodedCity), 1000);  // recursive, which probabaly explains the error
     }
 
     var citiesToDecode = numCities * totalRounds; //9;   //CJ: cities per round * number of rounds?
@@ -230,13 +228,13 @@ function fetchCity(latlng, callback) {   //callback is a function you'll provide
         //4. At some point, the request is returned, and this runs.
         //Meanwhile, fetchCity finished and returned the default stadt value, and whatever function it is returned to continues to run.
 
-        if (status === google.maps.GeocoderStatus.OK && results[0]) {         // TODO: whe I go to update the game, I need a "while undefined" loop in the calling function
+        if (status === google.maps.GeocoderStatus.OK && results[0]) {
             //alert(results[0].formatted_address);  // alerting works so why doesn't setting value of stadt work?
             stadt = results[0].formatted_address;
         } else {
             // do nothing
             // alert("coordinates fell through");
-
+            // TODO:  make the game wait?  to prevent excessive callbacks?
         }
 
         /*  DEBUGGING:
