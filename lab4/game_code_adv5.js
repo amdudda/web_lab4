@@ -38,13 +38,14 @@ function randomgLong() {
 var staedte = [];  // cities returned by the geocoder - probably can move this into geocodedCity function?
 
 var citiesGeocoded = 0;   //Counter - represents results returned
+var announceSetup = true;  // a way to slow down the game a bit so we don't get stack size exceeded.  horrible hack!!
 
 function setupGame() {
     for (i = 0; i < totalRounds; i++) {
         for (var j = 0; j < numCities; j++) {
             // pick a random number to convert into coordinates within an acceptable range
-            var nCoord = randomLat(); //((Math.random()) * nsRange) + south;
-            var wCoord = randomgLong(); // -((Math.random()) * ewRange) + west;
+            var nCoord = randomLat();
+            var wCoord = randomgLong();
             var myCity = fetchCity({lat: nCoord, lng: wCoord}, geocodedCity);  // CJ: Add callback function as argument.
         }
     }
@@ -52,11 +53,16 @@ function setupGame() {
 
 
 function geocodedCity(stadt) {           //The geocoder is calling this when it has a result, or error
-    alert("geocoder done " + stadt.name);
-    document.getElementById("processing").innerText="processing..."
+    //alert("geocoder done " + stadt.name);
+    if (announceSetup) {
+        alert("Setting up game!");
+        announceSetup = false;
+    }
     // we need to make sure we have a decent city name, or this game is kind of unexciting because "undefined" becomes an easy answer
-    // TODO: If city not actually in MN, we're cheating the players.
-    if (stadt.name != undefined) {
+    // If city not actually in MN, we're cheating the players.
+    // TODO: getting lots of "Uncaught RangeError: Maximum call stack size exceeded" errors.  I suspect the code is asking for too much
+    // data too quickly and annoying Google, because when I run in debug mode, the problems go away.
+    if (stadt.name != undefined) { // && parseStateName(stadt.name) == "MN") {
         // increment the number of cities found
         citiesGeocoded++;
         // pull the city name out of the data:
@@ -68,7 +74,7 @@ function geocodedCity(stadt) {           //The geocoder is calling this when it 
         // have to pull new coordinates
         var nCoord = randomLat(); //((Math.random()) * nsRange) + south;
         var wCoord = randomgLong(); // -((Math.random()) * ewRange) + west;
-        var myCity = fetchCity({lat: nCoord, lng: wCoord}, geocodedCity);
+        var myCity = fetchCity({lat: nCoord, lng: wCoord}, geocodedCity);  // recursive, which probabaly explains the error
     }
 
     var citiesToDecode = numCities * totalRounds; //9;   //CJ: cities per round * number of rounds?
@@ -108,6 +114,14 @@ function parseCityName(city) {
     var start = shortCity.lastIndexOf(",") + 1;
     shortCity = shortCity.substring(start);
     return shortCity;
+}
+
+function parseStateName(city) {
+    var cityLen = city.length;
+    var extraDetails = "MN 55723, USA".length;
+    var cutoff = cityLen - extraDetails;
+    var state = city.substr(cutoff,2);
+    return state;
 }
 
 // some variables for game management
